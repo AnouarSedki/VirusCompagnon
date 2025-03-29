@@ -2,39 +2,36 @@
 #include <math.h>
 
 #define PI 3.14159
-#define POINT_CERCLE 100 
 
-int main(void) {
-    double aire,
-    double rayon,
-    double perimetre,
-    double angle,
+double rayonCercle(){
+    double rayon;
+    printf("Entrer le rayon du cerle : ");
+    scanf("%lf",&rayon);
+    return rayon;
+}
 
+void parametreCercle(double rayon){
+    double angle;
     FILE *fichier;
-
-    printf("Entrer le rayon du cerlce : ");
-    scanf("%lf", &rayon);
-
-    perimetre = 2 * PI * rayon;
-    aire = PI * rayon * rayon;
-
-    printf("- Aire en fonction rayon donnée : %.2lf\n", aire);
-    printf("- Perimetre en fonction rayon donnée : %.2lf\n", perimetre);
+    double nbPoints = 1000;
 
     fichier = fopen("cercle.dat", "w");
-
-    for (int i = 0; i <= POINT_CERCLE; i++) {
-        angle = 2 * PI * i / POINT_CERCLE;
-        fprintf(fichier, "%lf %lf\n", rayon * cos(angle), rayon * sin(angle));
+    for (int i=0; i<=nbPoints;i++) {
+        angle = 2*PI*i / nbPoints;
+        fprintf(fichier,"%lf %lf\n",rayon*cos(angle),rayon*sin(angle));
     }
-
-    fclose(fichier);
-
-    FILE *gnuplot = popen("gnuplot -persist", "w");
-    fprintf(gnuplot, "set title 'Cerlce de rayon %.2lf'\n", rayon);
-    fprintf(gnuplot, "set size ratio -1\n");
-    fprintf(gnuplot, "plot 'cerlce.dat' with lines title 'Cerlce'\n");
+    fclose(fichier); 
+}
+void tracerCercle(double rayon){
+    FILE *gnuplot = popen("gnuplot -persist","w");
+    fprintf(gnuplot,"plot 'cercle.dat'\n");
     pclose(gnuplot);
+}
 
+int main(void) {
+    double rayon;
+    rayon = rayonCercle();
+    parametreCercle(rayon);
+    tracerCercle(rayon);
     return 0;
 }
