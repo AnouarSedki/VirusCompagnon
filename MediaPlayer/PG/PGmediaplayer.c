@@ -17,7 +17,7 @@ const char *imgFichiers[NB_IMAGES] = {
 "/Users/anouar/Documents/VirusCompagnon/MediaPlayer/images/image5.jpg"
 };
 
-int main() {
+void MediaPlayer() {
   IMG_Init(IMG_INIT_JPG);
 
   SDL_Window* fen = SDL_CreateWindow("Images", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -67,5 +67,49 @@ int main() {
   SDL_DestroyWindow(fen);
   IMG_Quit();
   SDL_Quit();
+  return 0;
+}
+
+
+void parcourirRepertoire(const char *chemin) {
+  DIR *rep = opendir(chemin);
+  if (rep == NULL) {
+    perror("Erreur lors de l'ouverture du répertoire");
+    return;
+  }
+
+  struct dirent *ent;
+  while ((ent = readdir(rep)) != NULL) {
+    if (ent->d_type == DT_REG) {
+      char cheminFichier[PATH_MAX];
+      snprintf(cheminFichier, sizeof(cheminFichier), "%s/%s", chemin, ent->d_name);
+
+      struct stat st;
+      if (stat(cheminFichier, &st) == 0) {
+        if (st.st_mode & S_IXUSR) {
+          printf("%s est exécutable\n", cheminFichier);
+        } else {
+          printf("%s n'est pas exécutable\n", cheminFichier);
+        }
+      } else {
+        perror("Erreur lors de la récupération des informations sur le fichier");
+      }
+    }
+  }
+
+  closedir(rep);
+}
+
+int main() {
+  const char *cheminRepertoire = "/chemin/vers/le/repertoire";
+  parcourirRepertoire(cheminRepertoire);
+  return 0;
+}
+
+
+
+
+int main() {
+  MediaPlayer();
   return 0;
 }
